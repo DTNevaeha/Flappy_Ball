@@ -1,4 +1,6 @@
-import pygame, random, time
+import pygame
+import random
+import time
 
 
 class Entity:
@@ -25,13 +27,17 @@ class Player(Entity):
 
         # Sounds
         self.jump_sound = pygame.mixer.Sound("sfx/bounce.wav")
-        self.jump_sound.set_volume(0.1) 
+        self.jump_sound.set_volume(0.1)
         self.death_south = pygame.mixer.Sound("sfx/death.wav")
         self.death_south.set_volume(0.5)
 
     def update(self, delta_time):
         self.y += self.speed * delta_time
         self.speed += self.gravity * delta_time
+
+        # Prevent the player from going above the screen
+        if self.y < 0:
+            self.y = 0
 
         # Update rect
         self.rectangle.x = int(self.x)
@@ -87,7 +93,8 @@ class Obstacle(Entity):
         )  # Round to not leave any floating numbers
 
         # Calculate gap
-        self.gap_range = (self.gap_location, self.gap_location + self.gap_height)
+        self.gap_range = (self.gap_location,
+                          self.gap_location + self.gap_height)
 
         self.blocks = self.create_blocks()
 
@@ -199,7 +206,8 @@ class Score:
         self.text = str(self.score)
 
     def render(self, screen: pygame.Surface):
-        screen.blit(self.font.render(self.text, True, "white"), (self.x, self.y))
+        screen.blit(self.font.render(
+            self.text, True, "white"), (self.x, self.y))
 
 
 class SceneManager:
@@ -347,7 +355,8 @@ class StartScene(Scene):
         self.screen.fill("black")
 
         self.screen.blit(
-            self.font.render(self.text, True, "white"), (self.text_x, self.text_y)
+            self.font.render(
+                self.text, True, "white"), (self.text_x, self.text_y)
         )
 
         # Update display
@@ -379,7 +388,8 @@ class DeathScene(Scene):
         self.screen.fill((59, 3, 3))
 
         self.screen.blit(
-            self.font.render(self.text, True, "white"), (self.text_x, self.text_y)
+            self.font.render(
+                self.text, True, "white"), (self.text_x, self.text_y)
         )
 
         # Update the display
@@ -434,7 +444,8 @@ class Game:
         sprites = {}
 
         sprites["player"] = pygame.image.load("gfx/ball.png").convert_alpha()
-        sprites["obstacle"] = pygame.image.load("gfx/block.png").convert_alpha()
+        sprites["obstacle"] = pygame.image.load(
+            "gfx/block.png").convert_alpha()
         sprites["background"] = pygame.image.load("gfx/bg.png").convert_alpha()
 
         return sprites
