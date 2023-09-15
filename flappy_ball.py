@@ -4,7 +4,12 @@ import time
 
 
 class Entity:
-    def __init__(self, x: float, y: float, speed: float, sprite: pygame.Surface):
+    def __init__(
+            self,
+            x: float,
+            y: float, speed: float,
+            sprite: pygame.Surface
+    ):
         self.x = x
         self.y = y
         self.speed = speed
@@ -19,7 +24,12 @@ class Entity:
 
 class Player(Entity):
     def __init__(
-        self, x: float, y: float, speed: float, sprite: pygame.Surface, gravity: float
+        self,
+        x: float,
+        y: float,
+        speed: float,
+        sprite: pygame.Surface,
+        gravity: float
     ):
         super().__init__(x, y, speed, sprite)
         self.gravity = gravity
@@ -56,7 +66,13 @@ class Player(Entity):
 class Obstacle(Entity):
     # Nested class because we will be using multiple blocks
     class ObstacleBlock(Entity):
-        def __init__(self, x: float, y: float, speed: float, sprite: pygame.Surface):
+        def __init__(
+                self,
+                x: float,
+                y: float,
+                speed: float,
+                sprite: pygame.Surface
+        ):
             super().__init__(x, y, speed, sprite)
             self.rectangle = self.sprite.get_rect()
 
@@ -77,7 +93,8 @@ class Obstacle(Entity):
         speed: float,
         screen_height: int,
         gap_height: int,  # Number of blocks missing to form gap in walls
-        gap_location: int,  # Number of blocks from the top of the screen where gap is located
+        # Number of blocks from the top of the screen where gap is located
+        gap_location: int,
         sprite: pygame.Surface,
     ):
         super().__init__(x, y, speed, sprite)
@@ -93,8 +110,10 @@ class Obstacle(Entity):
         )  # Round to not leave any floating numbers
 
         # Calculate gap
-        self.gap_range = (self.gap_location,
-                          self.gap_location + self.gap_height)
+        self.gap_range = (
+            self.gap_location,
+            self.gap_location + self.gap_height
+        )
 
         self.blocks = self.create_blocks()
 
@@ -103,9 +122,10 @@ class Obstacle(Entity):
     def create_blocks(self) -> list[ObstacleBlock]:
         obstacle_list = []
         current_block = 0
-        for i in range(self.num_blocks):
-            if i < self.gap_range[0] or i > self.gap_range[1]:
-                # x value is all moving at once, but Y value gap changes. Current block tracks the current pixel value
+        for block in range(self.num_blocks):
+            if block < self.gap_range[0] or block > self.gap_range[1]:
+                # x value is all moving at once, but Y value gap changes.
+                # Current block tracks the current pixel value
                 obstacle_list.append(
                     Obstacle.ObstacleBlock(
                         self.x, current_block, self.speed, self.sprite
@@ -142,7 +162,8 @@ class Environment:
         self.player = player
         self.sprites = sprites
 
-        self.obstacles = []  # Contain all of the currently active obstacles on screen
+        # Contain all of the currently active obstacles on screen
+        self.obstacles = []
         self.obstacle_spawn_point = 1280  # spawn on far right of screen
         self.new_obstacle_timer = 0
 
@@ -166,7 +187,8 @@ class Environment:
                 obstacle.passed = True
                 self.score_tracker += 1
 
-        if self.new_obstacle_timer > self.frequency:  # Time to spawn a new obstacle
+        # Time to spawn a new obstacle
+        if self.new_obstacle_timer > self.frequency:
             gap = random.randint(2, 10)
 
             obstacle = Obstacle(
@@ -206,8 +228,8 @@ class Score:
         self.text = str(self.score)
 
     def render(self, screen: pygame.Surface):
-        screen.blit(self.font.render(
-            self.text, True, "white"), (self.x, self.y))
+        screen.blit(self.font.render(self.text, True, "white"),
+                    (self.x, self.y))
 
 
 class SceneManager:
@@ -238,7 +260,12 @@ class SceneManager:
 
 
 class Scene:
-    def __init__(self, manager: SceneManager, screen: pygame.Surface, sprites: dict):
+    def __init__(
+            self,
+            manager: SceneManager,
+            screen: pygame.Surface,
+            sprites: dict
+    ):
         self.manager = manager
         self.screen = screen
         self.sprites = sprites
@@ -254,7 +281,12 @@ class Scene:
 
 
 class MainScene(Scene):
-    def __init__(self, manager: SceneManager, screen: pygame.Surface, sprites: dict):
+    def __init__(
+            self,
+            manager: SceneManager,
+            screen: pygame.Surface,
+            sprites: dict
+    ):
         super().__init__(manager, screen, sprites)
 
         self.previous_time = None
@@ -340,7 +372,12 @@ class MainScene(Scene):
 
 
 class StartScene(Scene):
-    def __init__(self, manager: SceneManager, screen: pygame.Surface, sprites: dict):
+    def __init__(
+            self,
+            manager: SceneManager,
+            screen: pygame.Surface,
+            sprites: dict
+    ):
         super().__init__(manager, screen, sprites)
         self.font = pygame.font.SysFont("Arial", 36)
         self.text = "Press Space To Begin"
@@ -355,8 +392,8 @@ class StartScene(Scene):
         self.screen.fill("black")
 
         self.screen.blit(
-            self.font.render(
-                self.text, True, "white"), (self.text_x, self.text_y)
+            self.font.render(self.text, True, "white"),
+            (self.text_x, self.text_y)
         )
 
         # Update display
@@ -373,7 +410,12 @@ class StartScene(Scene):
 
 
 class DeathScene(Scene):
-    def __init__(self, manager: SceneManager, screen: pygame.Surface, sprites: dict):
+    def __init__(
+            self,
+            manager: SceneManager,
+            screen: pygame.Surface,
+            sprites: dict
+    ):
         super().__init__(manager, screen, sprites)
         self.font = pygame.font.SysFont("Arial", 36)
         self.text = "You Died! Press Space to Restart"
@@ -388,8 +430,8 @@ class DeathScene(Scene):
         self.screen.fill((59, 3, 3))
 
         self.screen.blit(
-            self.font.render(
-                self.text, True, "white"), (self.text_x, self.text_y)
+            self.font.render(self.text, True, "white"),
+            (self.text_x, self.text_y)
         )
 
         # Update the display
@@ -444,8 +486,7 @@ class Game:
         sprites = {}
 
         sprites["player"] = pygame.image.load("gfx/ball.png").convert_alpha()
-        sprites["obstacle"] = pygame.image.load(
-            "gfx/block.png").convert_alpha()
+        sprites["obstacle"] = pygame.image.load("gfx/block.png").convert_alpha()  # noqa: E501  This ignores line too long with flake8
         sprites["background"] = pygame.image.load("gfx/bg.png").convert_alpha()
 
         return sprites
