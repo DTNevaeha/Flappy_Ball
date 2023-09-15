@@ -11,7 +11,7 @@ setup(
     packages=find_packages(),
     entry_point={
         'console_scripts': [
-            'flappy-ball-cli = flappy_bird.main:main',
+            'flappy-ball-cli = flappy_ball.main:main',
         ]
     }
 )
